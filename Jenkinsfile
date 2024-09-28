@@ -8,22 +8,26 @@ pipeline {
 
     environment {
         GIT_REPO   = 'https://github.com/Kdargan/addressbook_Preethi.git'
-//        Kdslave1   = 'ec2-user@54.235.12.190'
+        Kdslave1   = 'ec2-user@54.235.12.190'
         Kdslave2   = 'ec2-user@54.157.152.161'
         DEST_PATH  = '/home/ec2-user'
     }
 
     stages {
         stage('Checkout') {
-            agent {label 'kdslave1'}
+            agent any
             steps {
+                script {
+                    sshagent(['Kdslave1']) {
                 echo "In-progress Checkout"
                 git branch: 'master', url: "${GIT_REPO}"
             }
         }
+            }
+        }
 
         stage('Compile') {
-            agent {label 'kdslave1'}
+            agent any
             steps {
                 script {
                     sshagent(['Kdslave1']) { // Ensure 'Kdslave1' is correctly configured in Jenkins
@@ -36,7 +40,7 @@ pipeline {
         }
 
         stage('Package') {
-            agent {label 'kdslave1'}
+            agent any
             steps {
                 script {
                     sshagent(['Kdslave1']) {
