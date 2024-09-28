@@ -8,8 +8,8 @@ pipeline {
 
     environment {
         GIT_REPO   = 'https://github.com/Kdargan/addressbook_Preethi.git'
-        KDSLAVE1   = 'ec2-user@54.235.12.190'
-        KDSLAVE2   = 'ec2-user@54.157.152.161'
+        Kdslave1   = 'ec2-user@54.235.12.190'
+        Kdslave2   = 'ec2-user@54.157.152.161'
         DEST_PATH  = '/home/ec2-user'
     }
 
@@ -18,8 +18,7 @@ pipeline {
             agent any
             steps {
                 echo "In-progress Checkout"
-                sudo yum install git -y
-                git branch: 'feature1', url: "${git_repo}"
+                git branch: 'master', url: "${GIT_REPO}"
             }
         }
 
@@ -55,8 +54,8 @@ pipeline {
                     sshagent(['Kdslave2']) { // Ensure 'Kdslave2' is correctly configured in Jenkins
                         echo "In-progress Test"
                         // Ensure 'kdslave2_configfile.sh' exists in the workspace
-                        sh "scp -o StrictHostKeyChecking=no kdslave2_configfile.sh ${KDSLAVE2}:${DEST_PATH}"
-                        sh "ssh -o StrictHostKeyChecking=no ${KDSLAVE2} 'bash ${DEST_PATH}/kdslave2_configfile.sh'"
+                        sh "scp -o StrictHostKeyChecking=no kdslave2_configfile.sh ${Kdslave2}:${DEST_PATH}"
+                        sh "ssh -o StrictHostKeyChecking=no ${Kdslave2} 'bash ${DEST_PATH}/kdslave2_configfile.sh'"
                         sh 'mvn test'
                     }
                 }
