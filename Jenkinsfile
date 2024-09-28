@@ -3,6 +3,7 @@ pipeline {
     agent none
 
     tools {
+        git "mygit "
         maven "mymvn"
     }
 
