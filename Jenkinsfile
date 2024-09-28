@@ -8,8 +8,8 @@ pipeline {
 
     environment {
         GIT_REPO   = 'https://github.com/Kdargan/addressbook_Preethi.git'
-        KDSLAVE1   = 'ec2-user@54.235.12.190' // Use uppercase for environment variable names
-        KDSLAVE2   = 'ec2-user@54.157.152.161' // Use uppercase for environment variable names
+        KDSLAVE1   = 'ec2-user@172.31.26.197' // Use uppercase for environment variable names
+        KDSLAVE2   = 'ec2-user@172.31.51.126' // Use uppercase for environment variable names
         DEST_PATH  = '/home/ec2-user'
     }
 
