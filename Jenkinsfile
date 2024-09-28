@@ -15,8 +15,8 @@ stage('Compile') {
             steps {
                     script{
                     sshagent(['Kdslave1']){
-               echo "In-progress Compile"
-                sh 'mvn clean'    
+               echo "In-progress Compile" 
+                sh 'mvn clean'        
                 sh 'mvn compile'
                 }
             }
@@ -27,8 +27,7 @@ stage('Package') {
             steps {
                 script{
                     sshagent(['Kdslave1']) {
-               echo "In-progress Pakage"
-                sh 'mvn clean'    
+               echo "In-progress Pakage"   
                 sh 'mvn package'
                 }
             }
