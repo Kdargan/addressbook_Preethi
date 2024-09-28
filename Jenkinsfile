@@ -20,8 +20,6 @@ pipeline {
                 echo "In-progress Checkout"
                 sudo yum install git -y
                 git branch: 'feature1', url: "${git_repo}"
-                
-                )
             }
         }
 
