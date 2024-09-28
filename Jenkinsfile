@@ -3,7 +3,6 @@ pipeline {
     agent none
 
     tools {
-        git "mygit "
         maven "mymvn"
     }
 
@@ -18,8 +17,13 @@ pipeline {
         stage('Checkout') {
             agent any
             steps {
-                // Optional: Add a checkout step to clone your repository
-                git url: "${GIT_REPO}", branch: 'main'
+                git(
+                    url: "${GIT_REPO}",
+                    branch: 'master', // Update to 'main' if your default branch is 'main'
+                    // No credentialsId needed for public repositories
+                    changelog: false,
+                    poll: false
+                )
             }
         }
 
@@ -27,7 +31,7 @@ pipeline {
             agent any
             steps {
                 script {
-                    sshagent(['Kdslave1']) {
+                    sshagent(['Kdslave1']) { // Ensure 'Kdslave1' is correctly configured in Jenkins
                         echo "In-progress Compile"
                         sh 'mvn clean'
                         sh 'mvn compile'
@@ -52,9 +56,9 @@ pipeline {
             agent any
             steps {
                 script {
-                    sshagent(['Kdslave2']) {
+                    sshagent(['Kdslave2']) { // Ensure 'Kdslave2' is correctly configured in Jenkins
                         echo "In-progress Test"
-                        // Ensure that 'kdslave2_configfile.sh' exists in the workspace
+                        // Ensure 'kdslave2_configfile.sh' exists in the workspace
                         sh "scp -o StrictHostKeyChecking=no kdslave2_configfile.sh ${KDSLAVE2}:${DEST_PATH}"
                         sh "ssh -o StrictHostKeyChecking=no ${KDSLAVE2} 'bash ${DEST_PATH}/kdslave2_configfile.sh'"
                         sh 'mvn test'
