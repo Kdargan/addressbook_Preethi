@@ -1,84 +1,42 @@
+#test file created by KD.
 pipeline {
     agent none
     tools {
         maven "mymvn"
     }
-    parameters{
-        booleanParam(name: 'Checkout_Feature_branch', defaultValue: true, description: 'If the stage has to execute or not')
-        booleanParam(name: 'RUN_STAGE_Compile', defaultValue: true, description: 'If the stage has to execute or not')
-        booleanParam(name: 'RUN_STAGE_Test', defaultValue: true, description: 'If the stage has to execute or not')
-        booleanParam(name: 'RUN_STAGE_Install', defaultValue: true, description: 'If the stage has to execute or not')
-    }
     environment{
         git_repo='https://github.com/Kdargan/java11-junit5-archetype.git'
-        kdslave2='ec2-user@35.175.126.109'
+        kdslave2='ec2-user@54.157.152.161'
+        kdslave1='ec2-user@54.235.12.190'
         DEST_PATH='/home/ec2-user'
-            }
-    
-    options {
-        timeout(time: 180, unit: 'SECONDS')
-        buildDiscarder(logRotator(numToKeepStr: '3'))
-    }
-
-    stages {
-        stage('Checkout Branch') {
-            agent {label 'kdslave1'}
-            
-                when{
-                expression{
-                    params.Checkout_Feature_branch == true
-                }
-            }
-            input {
-                message "Select Branch"
-                ok "Selected"
-                parameters {
-                    choice(name: 'Checkout branch', choices: ['feature1', 'feature2', 'feature3'], description: 'Checkout to branch')
-                }
-                }
-            
-            steps {
-               echo "In-progress Checkout"
-                git branch: 'feature1', url: "${git_repo}"
-                
-                }
-                        }        
+            }        
 stage('Compile') {
-    agent {label 'kdslave1'}
-    when{
-                expression{
-                    params.RUN_STAGE_Compile == true
-                }
-            }
+    agent any
             steps {
-                script{
+                    script{
+                    sshagent(['Kdslave1']){
                echo "In-progress Compile"
                 sh 'mvn clean'    
                 sh 'mvn compile'
                 }
             }
-
+            }
             }
 stage('Package') {
-    agent {label 'kdslave1'}
+    agent any
             steps {
                 script{
+                    sshagent(['Kdslave1']) {
                echo "In-progress Pakage"
                 sh 'mvn clean'    
                 sh 'mvn package'
                 }
             }
-
+            }
             }
 stage('Test') {
     agent any
-    when{
-                expression{
-                    params.RUN_STAGE_Test == true
-                }
-            }
-   
-            steps {
+     steps {
                 script{
                     sshagent(['Kdslave2']) {
             echo "In-progress Test"
@@ -91,19 +49,7 @@ stage('Test') {
 }
 stage('Install') {
     agent any
-    when{
-                expression{
-                    params.RUN_STAGE_Install == true
-                }
-            }
-    input {
-                message "Select Branch"
-                ok "Selected"
-                parameters {
-                    choice(name: 'Checkout branch', choices: ['feature1', 'feature2', 'feature3'], description: 'Checkout to branch')
-                }
-                }
-            steps {
+       steps {
                 script{
                     sshagent(['Kdslave2']) {
                echo "In-progress install"       
@@ -111,6 +57,4 @@ stage('Install') {
                 }
                     }
                 }
-}
-        }
 }
