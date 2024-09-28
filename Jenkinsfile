@@ -5,7 +5,7 @@ pipeline {
         maven "mymvn"
     }
     environment{
-        git_repo='https://github.com/Kdargan/java11-junit5-archetype.git'
+        git_repo='https://github.com/Kdargan/addressbook_Preethi.git'
         kdslave2='ec2-user@54.157.152.161'
         kdslave1='ec2-user@54.235.12.190'
         DEST_PATH='/home/ec2-user'
