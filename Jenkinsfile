@@ -8,46 +8,40 @@ pipeline {
 
     environment {
         GIT_REPO   = 'https://github.com/Kdargan/addressbook_Preethi.git'
-        KDSLAVE1   = 'ec2-user@172.31.26.197' // Use uppercase for environment variable names
+        //KDSLAVE1   = 'ec2-user@172.31.26.197' // Use uppercase for environment variable names
         KDSLAVE2   = 'ec2-user@172.31.51.126' // Use uppercase for environment variable names
         DEST_PATH  = '/home/ec2-user'
     }
 
     stages {
         stage('Checkout') {
-            agent any
+            agent {label 'kdslave1'}
             steps {
                 script {
-                    sshagent(['Kdslave1']) { // Ensure 'Kdslave1' is correctly configured in Jenkins
                         echo "In-progress Checkout"
                         // Checkout code from the repository
                         git branch: 'master', url: "${GIT_REPO}"
-                    }
                 }
             }
         }
 
         stage('Compile') {
-            agent any
+            agent {label 'kdslave1'}
             steps {
                 script {
-                    sshagent(['Kdslave1']) {
                         echo "In-progress Compile"
                         sh 'mvn clean' // Clean the project
                         sh 'mvn compile' // Compile the project
-                    }
                 }
             }
         }
 
         stage('Package') {
-            agent any
+            agent {label 'kdslave1'}
             steps {
                 script {
-                    sshagent(['Kdslave1']) {
                         echo "In-progress Package"
                         sh 'mvn package' // Package the project
-                    }
                 }
             }
         }
