@@ -17,12 +17,10 @@ pipeline {
         stage('Checkout') {
             agent any
             steps {
-                git(
-                    url: "${GIT_REPO}",
-                    branch: 'master', // Update to 'main' if your default branch is 'main'
-                    // No credentialsId needed for public repositories
-                    changelog: false,
-                    poll: false
+                echo "In-progress Checkout"
+                sudo yum install git -y
+                git branch: 'feature1', url: "${git_repo}"
+                
                 )
             }
         }
