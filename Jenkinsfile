@@ -1,4 +1,3 @@
-#test file created by KD.
 pipeline {
     agent none
     tools {
