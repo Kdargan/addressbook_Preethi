@@ -3,13 +3,13 @@ pipeline {
     agent none
 
     tools {
-        maven "mymvn"
+        maven "mymvn" // Ensure 'mymvn' is correctly configured in Jenkins
     }
 
     environment {
         GIT_REPO   = 'https://github.com/Kdargan/addressbook_Preethi.git'
-        Kdslave1   = 'ec2-user@54.235.12.190'
-        Kdslave2   = 'ec2-user@54.157.152.161'
+        Kdslave1   = 'ec2-user@54.235.12.190' // Use uppercase for environment variable names
+        KDSLAVE2   = 'ec2-user@54.157.152.161' // Use uppercase for environment variable names
         DEST_PATH  = '/home/ec2-user'
     }
 
@@ -18,11 +18,12 @@ pipeline {
             agent any
             steps {
                 script {
-                    sshagent(['Kdslave1']) {
-                echo "In-progress Checkout"
-                git branch: 'master', url: "${GIT_REPO}"
-            }
-        }
+                    sshagent(['Kdslave1']) { // Ensure 'Kdslave1' is correctly configured in Jenkins
+                        echo "In-progress Checkout"
+                        // Checkout code from the repository
+                        git branch: 'master', url: "${GIT_REPO}"
+                    }
+                }
             }
         }
 
@@ -30,10 +31,10 @@ pipeline {
             agent any
             steps {
                 script {
-                    sshagent(['Kdslave1']) { // Ensure 'Kdslave1' is correctly configured in Jenkins
+                    sshagent(['Kdslave1']) {
                         echo "In-progress Compile"
-                        sh 'mvn clean'
-                        sh 'mvn compile'
+                        sh 'mvn clean' // Clean the project
+                        sh 'mvn compile' // Compile the project
                     }
                 }
             }
@@ -45,7 +46,7 @@ pipeline {
                 script {
                     sshagent(['Kdslave1']) {
                         echo "In-progress Package"
-                        sh 'mvn package'
+                        sh 'mvn package' // Package the project
                     }
                 }
             }
@@ -58,9 +59,11 @@ pipeline {
                     sshagent(['Kdslave2']) { // Ensure 'Kdslave2' is correctly configured in Jenkins
                         echo "In-progress Test"
                         // Ensure 'kdslave2_configfile.sh' exists in the workspace
-                        sh "scp -o StrictHostKeyChecking=no kdslave2_configfile.sh ${Kdslave2}:${DEST_PATH}"
-                        sh "ssh -o StrictHostKeyChecking=no ${Kdslave2} 'bash ${DEST_PATH}/kdslave2_configfile.sh'"
-                        sh 'mvn test'
+                        sh 'ls -l' // List files for debugging
+                        // Copy the script to the remote machine
+                        sh "scp -o StrictHostKeyChecking=no kdslave2_configfile.sh ${KDSLAVE2}:${DEST_PATH}"
+                        sh "ssh -o StrictHostKeyChecking=no ${KDSLAVE2} 'bash ${DEST_PATH}/kdslave2_configfile.sh'"
+                        sh 'mvn test' // Run tests
                     }
                 }
             }
@@ -72,7 +75,7 @@ pipeline {
                 script {
                     sshagent(['Kdslave2']) {
                         echo "In-progress Install"
-                        sh 'mvn install'
+                        sh 'mvn install' // Install the package
                     }
                 }
             }
